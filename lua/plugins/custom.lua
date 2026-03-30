@@ -29,7 +29,7 @@ return {
   {
     "stevearc/oil.nvim",
     opts = {
-        default_file_explorer = true,
+      default_file_explorer = true,
     },
     -- Optional dependencies
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -39,5 +39,36 @@ return {
   {
     "eandrju/cellular-automaton.nvim",
     cmd = "CellularAutomaton",
+  },
+
+  -- add harpoon
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("harpoon"):setup()
+    end,
+  },
+
+  -- disable ghost text in blink.cmp
+  {
+    "saghen/blink.cmp",
+    opts = {
+      completion = {
+        ghost_text = {
+          enabled = false,
+        },
+      },
+    },
+  },
+
+  -- disable ghost text in nvim-cmp (if it's being used)
+  {
+    "hrsh7th/nvim-cmp",
+    opts = function(_, opts)
+      opts.experimental = opts.experimental or {}
+      opts.experimental.ghost_text = false
+    end,
   },
 }

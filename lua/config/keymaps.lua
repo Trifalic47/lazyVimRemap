@@ -1,6 +1,22 @@
 -- Keymaps are automatically loaded on the VeryLazy event
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
+
+-- Disable some LazyVim defaults that conflict with the custom ones
+local function unmap(mode, lh)
+    pcall(vim.keymap.del, mode, lh)
+end
+
+-- Clear common conflict keys before mapping
+unmap("n", "<leader>s")
+unmap("n", "<leader>f")
+unmap("n", "<leader>e")
+unmap("n", "<leader>p")
+unmap("n", "<leader>w")
+unmap("n", "<leader>c")
+unmap("n", "<C-f>")
+
+-- REMAP.LUA INTEGRATION (Exact same)
+vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Oil)
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -13,12 +29,15 @@ vim.keymap.set("v", "<S-Tab>", "<gv")
 vim.keymap.set("v", "\\", "gc", { remap = true, desc = "Comment selected text" })
 vim.keymap.set("n", "\\", "gcc", { remap = true, desc = "Comment current line" })
 
+vim.api.nvim_set_keymap("n", "<leader>tf", "<Plug>PlenaryTestFile", { noremap = false, silent = false })
+
 vim.keymap.set("n", "J", "mzJ`z")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "=ap", "ma=ap'a")
+vim.keymap.set("n", "<leader>zig", "<cmd>LspRestart<cr>")
 
 -- Paste over without yanking
 vim.keymap.set("v", "p", [["_dP]])
@@ -41,7 +60,11 @@ vim.keymap.set("n", "<leader>r", [[:s/\<<C-r><C-w>\>/]], { desc = "Replace word 
 vim.keymap.set("n", "<leader>rw", "ciw", { desc = "Change current word" })
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
--- Go / C error handling shortcuts (from your remap.lua)
+vim.keymap.set("n", "<leader>lt", function()
+    vim.cmd [[ PlenaryBustedFile % ]]
+end)
+
+-- Go / C error handling shortcuts
 vim.keymap.set("n", "<leader>ee", "oif err != nil {<CR>}<Esc>Oreturn err<Esc>")
 vim.keymap.set("n", "<leader>ea", "oassert.NoError(err, \"\")<Esc>F\";a")
 vim.keymap.set("n", "<leader>ef", "oif err != nil {<CR>}<Esc>Olog.Fatalf(\"error: %s\\n\", err.Error())<Esc>jj")
@@ -49,7 +72,16 @@ vim.keymap.set("n", "<leader>el", "oif err != nil {<CR>}<Esc>O.logger.Error(\"er
 
 vim.keymap.set("n", "<leader>ca", function()
     require("cellular-automaton").start_animation("make_it_rain")
-end, { desc = "Cellular Automaton" })
+end)
+
+-- Harpoon keymaps
+vim.keymap.set("n", "<leader>a", function() require("harpoon"):list():add() end)
+vim.keymap.set("n", "<C-e>", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end)
+
+vim.keymap.set("n", "<M-1>", function() require("harpoon"):list():select(1) end)
+vim.keymap.set("n", "<M-2>", function() require("harpoon"):list():select(2) end)
+vim.keymap.set("n", "<M-3>", function() require("harpoon"):list():select(3) end)
+vim.keymap.set("n", "<M-4>", function() require("harpoon"):list():select(4) end)
 
 vim.keymap.set("n", "<M-h>", "<C-o>", { desc = "Jump back" })
 vim.keymap.set("n", "<M-l>", "<C-i>", { desc = "Jump forward" })
@@ -75,10 +107,24 @@ vim.keymap.set("n", "<C-Down>", ":resize -2<CR>")
 vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>")
 vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>")
 
--- Telescope mappings from remap.lua
-vim.keymap.set('n', '<leader>pf', function() require('telescope.builtin').find_files() end, { desc = "Search Files" })
-vim.keymap.set('n', '<C-p>', function() require('telescope.builtin').git_files() end, { desc = "Search Git Files" })
+-- Move window in direction (Shift + Move keys)
+vim.keymap.set("n", "<C-w><S-h>", "<C-w>H")
+vim.keymap.set("n", "<C-w><S-j>", "<C-w>J")
+vim.keymap.set("n", "<C-w><S-k>", "<C-w>K")
+vim.keymap.set("n", "<C-w><S-l>", "<C-w>L")
+
+-- Telescope mappings
+vim.keymap.set('n', '<leader>pf', function() require('telescope.builtin').find_files() end, {})
+vim.keymap.set('n', '<C-p>', function() require('telescope.builtin').git_files() end, {})
+vim.keymap.set('n', '<leader>pws', function()
+    local word = vim.fn.expand("<cword>")
+    require('telescope.builtin').grep_string({ search = word })
+end)
+vim.keymap.set('n', '<leader>pWs', function()
+    local word = vim.fn.expand("<cWORD>")
+    require('telescope.builtin').grep_string({ search = word })
+end)
 vim.keymap.set('n', '<leader>ps', function()
     require('telescope.builtin').grep_string({ search = vim.fn.input("Grep > ") })
-end, { desc = "Grep Search" })
-vim.keymap.set('n', '<leader>vh', function() require('telescope.builtin').help_tags() end, { desc = "Help Tags" })
+end)
+vim.keymap.set('n', '<leader>vh', function() require('telescope.builtin').help_tags() end, {})
