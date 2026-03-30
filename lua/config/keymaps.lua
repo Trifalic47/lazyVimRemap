@@ -83,6 +83,20 @@ vim.keymap.set("n", "<M-2>", function() require("harpoon"):list():select(2) end)
 vim.keymap.set("n", "<M-3>", function() require("harpoon"):list():select(3) end)
 vim.keymap.set("n", "<M-4>", function() require("harpoon"):list():select(4) end)
 
+vim.keymap.set("n", "<M-CR>", function()
+    -- Try gf (go to file) first for includes like <stdio.h>
+    local success, _ = pcall(vim.cmd, "normal! gf")
+    if success then return end
+
+    -- If gf fails, try LSP definition for functions
+    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    if #clients > 0 then
+        vim.lsp.buf.definition()
+    else
+        print("No file or definition found under cursor")
+    end
+end, { desc = "Smart open function or file" })
+
 vim.keymap.set("n", "<M-h>", "<C-o>", { desc = "Jump back" })
 vim.keymap.set("n", "<M-l>", "<C-i>", { desc = "Jump forward" })
 

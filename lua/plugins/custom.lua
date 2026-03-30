@@ -71,4 +71,35 @@ return {
       opts.experimental.ghost_text = false
     end,
   },
+
+  -- force disable clangd inlay hints
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        clangd = {
+          -- settings for clangd specifically
+          keys = {
+            { "<leader>ch", false }, -- disable toggle keymap
+          },
+          settings = {
+            clangd = {
+              InlayHints = {
+                Designators = false,
+                Enabled = false,
+                ParameterNames = false,
+                DeducedTypes = false,
+              },
+            },
+          },
+        },
+      },
+      setup = {
+        clangd = function()
+          vim.lsp.inlay_hint.enable(false)
+          return false -- return false so that lazyvim still starts the server
+        end,
+      },
+    },
+  },
 }

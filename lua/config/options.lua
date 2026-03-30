@@ -72,3 +72,7 @@ vim.lsp.inlay_hint.enable(false)
 -- DISABL AUTOFORMATTING (All languages)
 vim.g.autoformat = false
 vim.g.lazyvim_autoformat = false
+
+-- Enable gf for system includes
+vim.opt.path:append("/usr/include")
+vim.opt.path:append(".")
