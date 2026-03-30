@@ -34,6 +34,7 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "120"
 
+-- System Clipboard
 vim.opt.clipboard:append("unnamedplus")
 
 -- Additional Performance tweaks from before
@@ -42,22 +43,6 @@ vim.o.ttimeoutlen = 0
 vim.o.shada = "!,'100,<50,s10,h"
 vim.o.lazyredraw = true
 vim.o.redrawtime = 1500
-
--- Smoothness: Fix potential lag from clipboard on Linux (re-added)
-if vim.fn.has("linux") == 1 then
-    vim.g.clipboard = {
-        name = "myClipboard",
-        copy = {
-            ["+"] = "wl-copy",
-            ["*"] = "wl-copy",
-        },
-        paste = {
-            ["+"] = "wl-paste",
-            ["*"] = "wl-paste",
-        },
-        cache_enabled = 1,
-    }
-end
 
 -- Disable netrw for Oil
 vim.g.loaded_netrw = 1
